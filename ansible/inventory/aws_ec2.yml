@@ -1,0 +1,19 @@
+# Dynamic inventory — discovers EC2 instances by tag
+plugin: amazon.aws.aws_ec2
+
+regions:
+  - us-east-1
+
+filters:
+  tag:Environment: dev
+  instance-state-name: running
+
+keyed_groups:
+  - key: tags.Environment
+    prefix: env
+
+hostnames:
+  - instance-id   # use instance ID for SSM connectivity
+
+compose:
+  ansible_host: instance_id

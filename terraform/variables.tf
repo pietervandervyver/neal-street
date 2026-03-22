@@ -53,7 +53,7 @@ variable "instance_type" {
 }
 
 variable "ami_id" {
-  description = "Amazon Linux 2 AMI ID (update per region)"
+  description = "Amazon Linux 2023 AMI ID (update per region)"
   type        = string
-  default     = "ami-0c02fb55956c7d316" # Amazon Linux 2, us-east-1
+  default     = "ami-0453ec754f44f9a4a" # Amazon Linux 2023, us-east-1
 }

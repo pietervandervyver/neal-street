@@ -21,57 +21,26 @@ resource "aws_security_group" "ec2" {
   tags = { Name = "${var.env}-ec2-sg" }
 }
 
+resource "aws_key_pair" "app" {
+  key_name   = "${var.env}-app-key"
+  public_key = file("~/.ssh/id_ed25519.pub")
+}
+
 resource "aws_instance" "app" {
   ami                    = var.ami_id
   instance_type          = var.instance_type
   subnet_id              = aws_subnet.private.id
   vpc_security_group_ids = [aws_security_group.ec2.id]
   iam_instance_profile   = aws_iam_instance_profile.ec2_cloudwatch.name
+  key_name               = aws_key_pair.app.key_name
 
-  # Installs CloudWatch agent + a basic nginx server on boot
+  # Minimal user_data — just install SSM agent so Ansible can connect via SSM
   user_data = <<-EOF
     #!/bin/bash
-    yum update -y
-    yum install -y nginx amazon-cloudwatch-agent
-
-    # Start nginx
-    systemctl enable nginx
-    systemctl start nginx
-
-    # CloudWatch agent config — ships nginx + system logs
-    cat > /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json <<'CW'
-    {
-      "logs": {
-        "logs_collected": {
-          "files": {
-            "collect_list": [
-              {
-                "file_path": "/var/log/nginx/access.log",
-                "log_group_name": "/${var.env}/app",
-                "log_stream_name": "{instance_id}/nginx-access"
-              },
-              {
-                "file_path": "/var/log/nginx/error.log",
-                "log_group_name": "/${var.env}/app",
-                "log_stream_name": "{instance_id}/nginx-error"
-              },
-              {
-                "file_path": "/var/log/messages",
-                "log_group_name": "/${var.env}/system",
-                "log_stream_name": "{instance_id}/messages"
-              }
-            ]
-          }
-        }
-      }
-    }
-    CW
-
-    /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
-      -a fetch-config \
-      -m ec2 \
-      -c file:/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json \
-      -s
+    dnf update -y
+    dnf install -y amazon-ssm-agent
+    systemctl enable amazon-ssm-agent
+    systemctl start amazon-ssm-agent
   EOF
 
   tags = { Name = "${var.env}-app-server" }

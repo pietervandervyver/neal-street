@@ -1,0 +1,16 @@
+---
+- name: Bootstrap Python
+  hosts: env_dev
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Install Python3
+      ansible.builtin.raw: yum install -y python3
+      changed_when: true
+
+- name: Configure app servers
+  hosts: env_dev
+  become: true
+
+  roles:
+    - nginx
