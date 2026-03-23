@@ -18,6 +18,7 @@ permissions:
 env:
   TF_WORKING_DIR: terraform
   AWS_REGION: us-east-1
+  TF_VAR_env: dev
 
 jobs:
   terraform:
@@ -49,7 +50,7 @@ jobs:
 
       - name: Terraform Plan
         working-directory: ${{ env.TF_WORKING_DIR }}
-        run: terraform plan -out=tfplan
+        run: terraform plan -var="env=dev" -out=tfplan
 
       # Post plan output as PR comment
       - name: Post Plan to PR
@@ -74,4 +75,4 @@ jobs:
       - name: Terraform Apply
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         working-directory: ${{ env.TF_WORKING_DIR }}
-        run: terraform apply -auto-approve tfplan
+        run: terraform apply -var="env=dev" -auto-approve tfplan
