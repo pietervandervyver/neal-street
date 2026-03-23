@@ -4,6 +4,12 @@ variable "env" {
   default     = "dev"
 }
 
+variable "var_env" {
+  description = "Environment name"
+  type        = string
+  default     = "dev"
+}
+
 variable "region" {
   description = "AWS region"
   type        = string
