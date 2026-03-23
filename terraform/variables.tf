@@ -63,3 +63,8 @@ variable "ami_id" {
   type        = string
   default     = "ami-0453ec754f44f9a4a" # Amazon Linux 2023, us-east-1
 }
+
+variable "ssh_public_key" {
+  description = "SSH public key for EC2 access"
+  type        = string
+}

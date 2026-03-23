@@ -23,7 +23,7 @@ resource "aws_security_group" "ec2" {
 
 resource "aws_key_pair" "app" {
   key_name   = "${var.env}-app-key"
-  public_key = file("~/.ssh/id_ed25519.pub")
+  public_key = var.ssh_public_key
 }
 
 resource "aws_instance" "app" {

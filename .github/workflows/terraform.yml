@@ -19,6 +19,7 @@ env:
   TF_WORKING_DIR: terraform
   AWS_REGION: us-east-1
   TF_VAR_env: dev
+  TF_VAR_ssh_public_key: ${{ secrets.SSH_PUBLIC_KEY }}
 
 jobs:
   terraform:
