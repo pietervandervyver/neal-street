@@ -35,7 +35,7 @@ curl -v http://$(cd terraform && terraform output -raw alb_dns_name)
 
 # Next steps
 
-A production environment can be added by creating a prod.tfvars file containing
+A production environment can be added by creating a prod.tfvars file containing:
 env                          = "prod"
 instance_type                = "t3.small"
 vpc_cidr                     = "10.1.0.0/16"
