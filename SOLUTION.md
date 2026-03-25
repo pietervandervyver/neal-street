@@ -3,6 +3,9 @@ US East region.
 
 The Terraform state is stored in an S3 bucket.
 
+# SOLUTION
+
+
 In the private subnet, EC2 instances running Linux with nginx serves the 
 health API.
 
@@ -15,6 +18,8 @@ little extra work is required.
 
 I used AWS Kiro for my IDE with very good results.  I used its AI capabilities
 to debug the project.
+
+Ansible is triggered and used to install nginx.
 
 To test the system, the following can be excecuted from a terminal:
 
