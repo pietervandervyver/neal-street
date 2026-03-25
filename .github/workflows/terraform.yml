@@ -73,8 +73,25 @@ jobs:
         env:
           TF_WORKING_DIR: ${{ env.TF_WORKING_DIR }}
 
-      # Only apply on push to main
+      # Only apply on push to main or manual trigger
       - name: Terraform Apply
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'workflow_dispatch'
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform apply -var="env=dev" -auto-approve tfplan
+
+      - name: Install Ansible
+        if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'workflow_dispatch'
+        run: |
+          pip3 install ansible boto3 botocore
+          ansible-galaxy collection install amazon.aws community.aws
+
+      - name: Run Ansible Playbook
+        if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'workflow_dispatch'
+        working-directory: ansible
+        env:
+          ANSIBLE_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          echo "$ANSIBLE_PRIVATE_KEY" > /tmp/deploy_key
+          chmod 600 /tmp/deploy_key
+          ansible-playbook site.yml --private-key /tmp/deploy_key
+          rm /tmp/deploy_key
