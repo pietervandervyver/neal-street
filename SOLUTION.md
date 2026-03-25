@@ -1,10 +1,10 @@
+# SOLUTION
+
+
 The solution consists of a VPN, public and private subnets in two AZs in the 
 US East region.
 
 The Terraform state is stored in an S3 bucket.
-
-# SOLUTION
-
 
 In the private subnet, EC2 instances running Linux with nginx serves the 
 health API.
